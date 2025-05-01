@@ -10,8 +10,12 @@ defineOptions({
 </script>
 
 <template>
-  <main class="space-y-20 py-10">
-    <hero-section />
-    <project-preview />
+  <main class="min-h-screen overflow-x-hidden bg-gradient-to-b from-base-100 to-base-200">
+    <div class="flex flex-col pt-16">
+      <hero-section />
+      <div class="py-20">
+        <project-preview />
+      </div>
+    </div>
   </main>
 </template>
