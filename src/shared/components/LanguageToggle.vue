@@ -1,29 +1,27 @@
 <template>
   <div class="dropdown dropdown-end">
-    <div tabindex="0" role="button" class="btn btn-ghost">
+    <label tabindex="0" class="btn btn-ghost btn-sm normal-case">
       <span class="text-base">{{ currentLang === 'zh' ? '中' : 'En' }}</span>
-    </div>
+    </label>
     <ul
       tabindex="0"
-      class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-32"
+      class="menu dropdown-content z-[1] p-2 shadow bg-base-100 rounded-box w-32 mt-2"
     >
       <li>
-        <button
-          class="text-left hover:bg-primary hover:text-primary-content"
-          :class="{ 'bg-primary text-primary-content': currentLang === 'zh' }"
-          @click="changeLang('zh')"
+        <a
+          :class="{ 'menu-active': currentLang === 'zh' }"
+          @click.prevent="handleLanguageChange('zh')"
         >
           {{ t('common.language.zh') }}
-        </button>
+        </a>
       </li>
       <li>
-        <button
-          class="text-left hover:bg-primary hover:text-primary-content"
-          :class="{ 'bg-primary text-primary-content': currentLang === 'en' }"
-          @click="changeLang('en')"
+        <a
+          :class="{ 'menu-active': currentLang === 'en' }"
+          @click.prevent="handleLanguageChange('en')"
         >
           {{ t('common.language.en') }}
-        </button>
+        </a>
       </li>
     </ul>
   </div>
@@ -37,8 +35,13 @@ import { getCurrentLanguage, setLanguage } from '../i18n'
 const { t } = useI18n()
 const currentLang = ref(getCurrentLanguage())
 
-const changeLang = (lang: 'zh' | 'en') => {
+const handleLanguageChange = (lang: 'zh' | 'en') => {
   setLanguage(lang)
   currentLang.value = lang
+  // 手动关闭下拉菜单
+  const dropdown = document.activeElement as HTMLElement
+  if (dropdown) {
+    dropdown.blur()
+  }
 }
 </script> 
