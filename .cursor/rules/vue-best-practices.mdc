@@ -1,0 +1,225 @@
+---
+description: 本规则统一 Vue 3 项目的目录结构、脚本风格、样式系统、性能优化、安全策略等最佳实践，提升团队协作与代码质量。
+globs: ['**/*.vue', 'tsconfig.json', 'vite.config.ts']
+alwaysApply: false
+---
+## 项目结构建议（推荐采用 feature-based 结构）
+
+```
+src/
+├── features/                # 功能模块（业务隔离）
+│   └── user/
+│       ├── components/
+│       ├── views/
+│       ├── store/
+│       ├── services/
+│       ├── composables/
+├── shared/                  # 跨模块复用资源
+│   ├── components/          # 通用组件（如 BaseButton）
+│   ├── composables/         # 通用组合函数
+│   ├── utils/               # 工具函数
+│   ├── layouts/             # ✅ 页面布局模板（如顶部导航、侧边栏）
+│   │   ├── DefaultLayout.vue
+│   │   ├── AdminLayout.vue
+│   │   └── AuthLayout.vue
+├── assets/                  # 静态资源（图片、全局样式等）
+│   └── styles/
+├── plugins/                 # 插件注册（如 VueUse、Pinia）
+├── router/                  # 路由配置
+├── store/                   # 全局状态（如 userStore）
+├── App.vue
+├── main.ts
+```
+
+---
+
+## 🧩 Layout 使用建议
+
+类型	示例组件	推荐路径	说明
+通用页面模板	DefaultLayout	shared/layouts/	页面主体结构，如 header + footer
+管理后台模板	AdminLayout	shared/layouts/	包含侧边栏、顶部导航的后台框架
+登录注册专用模板	AuthLayout	shared/layouts/	无 header/footer 的极简认证视图容器
+
+
+示例：在路由中使用布局组件
+```ts
+// router/index.ts
+{
+  path: '/admin',
+  component: () => import('@/shared/layouts/AdminLayout.vue'),
+  children: [
+    { path: '', component: () => import('@/features/admin/views/Dashboard.vue') }
+  ]
+}
+```
+## 🧩 组件开发规范
+
+- 所有组件使用 `<script setup lang="ts">`。
+- 禁止使用 Options API。
+- 使用 `defineOptions({ name: 'ComponentName' })` 显式命名。
+- 推荐将逻辑抽离为 composables 使用。
+- 动画与过渡应使用 `transition-*`, `ease-*` 类实现。
+- 避免 `<style scoped>`，通过类名控制作用域。
+- 使用 DaisyUI 提供的类名风格统一，如 `btn`, `card`, `modal`。
+- 所有组件样式应通过 class 驱动，避免写选择器样式。
+
+---
+
+## 🎨 样式系统规范
+
+- 使用 **Tailwind CSS** + **DaisyUI**。
+- 禁止使用 SCSS、LESS、BEM、CSS Modules。
+- 禁止 `!important`、内联样式、深度选择器。
+- 所有样式在 `main.css` 统一引入。
+- 使用 DaisyUI 的 `@plugin` 进行组件控制、主题配置。
+
+---
+
+## 🔍 ESLint + Stylelint + Prettier 规范
+
+- 安装插件：
+
+```bash
+pnpm add -D eslint prettier stylelint husky lint-staged   eslint-plugin-vue @typescript-eslint/eslint-plugin   @typescript-eslint/parser stylelint-config-tailwindcss   stylelint-config-standard eslint-plugin-tailwindcss
+```
+
+- 推荐 ESLint 规则：
+
+```js
+rules: {
+  'vue/no-inline-styles': 'warn',
+  'vue/component-name-in-template-casing': ['warn', 'PascalCase'],
+  'vue/no-unused-components': 'warn',
+  'tailwindcss/no-custom-classname': 'off'
+}
+```
+
+- Prettier 格式化配置：
+
+```json
+{
+  "singleQuote": true,
+  "semi": false,
+  "trailingComma": "none"
+}
+```
+
+- Stylelint 配置：
+
+```js
+extends: ['stylelint-config-standard', 'stylelint-config-tailwindcss']
+```
+
+- 使用 lint-staged 自动修复：
+
+```json
+"lint-staged": {
+  "*.{vue,ts,js}": ["eslint --fix", "prettier --write"],
+  "*.{css,html}": ["stylelint --fix"]
+}
+```
+
+---
+
+## 🧾 命名规范
+
+| 内容类型   | 命名风格        | 示例                |
+| ---------- | --------------- | ------------------- |
+| 页面组件   | PascalCase      | `UserDashboard.vue` |
+| 通用组件   | PascalCase      | `BaseButton.vue`    |
+| 文件夹     | kebab-case      | `user-profile/`     |
+| store 文件 | camelCase       | `userStore.ts`      |
+| composable | use + camelCase | `usePagination.ts`  |
+| 类型定义   | PascalCase      | `UserProfile.ts`    |
+
+---
+
+## 🔌 API 层规范
+
+- 每模块独立 `service` 文件。
+- 所有请求通过统一封装的 `request.ts` 发送。
+- API 层不直接访问 store。
+- 使用 axios + 类型定义统一通信逻辑。
+
+---
+
+## 🛠️ 构建与部署建议
+
+- 使用 Vite 构建，启用代码分块。
+- 启用 Tree-shaking 和 hash 文件名。
+- 启用 gzip 压缩 + CDN 部署。
+- 动态 import 懒加载组件与路由。
+
+---
+
+## 🌐 国际化规范
+
+- 禁止直接在模板中写中文。
+- 使用 vue-i18n 实现懒加载语言包。
+- 所 `i18n` 管理。
+
+---
+
+## ♿ 可访问性（A11y）
+
+- 使用语义 HTML。
+- 所有按钮/图标设置 `aria-label` 和 `title`。
+- 确保 keyboard/tab 可导航。
+
+---
+
+## 📐 Composition API 最佳实践
+
+- 使用 `ref`、`reactive` 管理状态。
+- 派生值用 `computed`，副作用用 `watch`。
+- 所有生命周期事件通过组合式 API 控制。
+- 使用 `readonly` 限制外部修改。
+
+---
+
+## 📦 性能优化建议
+
+- `v-once`、`v-memo` 用于性能场景。
+- 路由懒加载 + 图片懒加载。
+- 卸载组件前释放事件与定时器。
+
+---
+
+## 🔒 安全策略
+
+- 所有表单输入应校验防止 XSS。
+- 接口通信使用 Token + HTTPS。
+- 后端使用参数化防 SQL 注入。
+- 密码存储使用哈希 + 盐。
+
+---
+
+## 🧪 测试规范
+
+- 使用 Vitest / Jest 编写单元测试。
+- 使用 Vue Test Utils 进行集成测试。
+- 使用 Cypress / Playwright 编写 E2E 测试。
+- 按模块分类管理所有测试用例。
+
+---
+
+## 📦 项目管理工具：pnpm（推荐）
+
+- 使用 `pnpm` 替代 npm/yarn，支持依赖去重。
+- 使用 `pnpm-workspace.yaml` 管理 monorepo：
+
+```yaml
+packages:
+  - "packages/*"
+  - "apps/*"
+  - "docs"
+```
+
+- 建议配置 `.npmrc`：
+
+```bash
+package-manager=pnpm@latest
+```
+
+- 所有命令使用 `pnpm`（如 `pnpm dev`、`pnpm build`）。
+- `pnpm dlx` 替代 `npx` 调用临时 CLI 工具。

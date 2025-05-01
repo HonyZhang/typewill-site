@@ -1,0 +1,236 @@
+---
+description: 本规则统一 Tailwind CSS 4.1 和 DaisyUI 5.0 在 Vue 3 + Vite 项目中的配置方式、样式组织、插件使用等最佳实践。
+globs: **/*.css,vite.config.ts
+alwaysApply: false
+---
+
+## 📦 依赖安装
+
+```bash
+pnpm add -D tailwindcss @tailwindcss/vite daisyui
+```
+
+## 📁 样式文件组织
+
+```
+src/
+└── assets/
+    └── styles/
+        └── main.css     # 样式入口文件
+```
+
+## 🎨 样式入口文件配置
+
+1. 使用默认配置：
+
+```css
+@import 'tailwindcss';
+@plugin "daisyui";
+```
+
+2. 自定义配置：
+
+```css
+@import 'tailwindcss';
+@plugin "daisyui" {
+  /* 主题配置 */
+  themes:
+    light --default,
+    dark --prefersdark;
+
+  /* 根选择器配置，默认为 ":root" */
+  root: ':root';
+
+  /* 包含的组件，为空表示包含所有 */
+  include:;
+
+  /* 排除的组件 */
+  exclude:;
+
+  /* 类名前缀 */
+  prefix:;
+
+  /* 是否显示日志，默认为 true */
+  logs: true;
+}
+```
+
+## ⚙️ Vite 配置
+
+`vite.config.ts` 配置：
+
+```ts
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig({
+  plugins: [vue(), tailwindcss()]
+})
+```
+
+## 🔌 样式导入
+
+在 `main.ts` 中导入样式：
+
+```ts
+import './assets/styles/main.css'
+```
+
+## 📝 注意事项
+
+1. Tailwind CSS 4.1 不再需要：
+
+   - `autoprefixer` 和 `postcss` 依赖
+   - `tailwind.config.js` 配置文件
+   - `@tailwind` 指令（改用 `@import "tailwindcss"`）
+
+2. DaisyUI 5.0 配置说明：
+
+   - 默认配置：直接使用 `@plugin "daisyui";`
+   - 自定义配置：使用 `@plugin "daisyui" { ... }`
+   - 配置项说明：
+     - `themes`: 启用的主题列表
+     - `root`: 根选择器，用于主题变量注入
+     - `include`: 需要包含的组件列表
+     - `exclude`: 需要排除的组件列表
+     - `prefix`: 组件类名前缀
+     - `logs`: 是否显示控制台日志
+
+3. 所有样式文件统一放在 `assets/styles` 目录下
+
+## 🎨 DaisyUI 配置示例
+
+1. 基础配置示例：
+
+```css
+@plugin "daisyui" {
+  themes:
+    light --default,
+    dark --prefersdark;
+  logs: false;
+}
+```
+
+2. 添加类名前缀：
+
+```css
+@plugin "daisyui" {
+  themes: corporate;
+  prefix: 'ui-'; /* 按钮类名将变为 ui-btn */
+}
+```
+
+3. 自定义组件范围：
+
+```css
+@plugin "daisyui" {
+  themes: light;
+  include: btn, card, modal; /* 只使用这些组件 */
+}
+```
+
+4. 排除特定组件：
+
+```css
+@plugin "daisyui" {
+  themes: dark;
+  exclude: menu, drawer; /* 不使用这些组件 */
+}
+```
+
+5. 完整配置示例：
+
+```css
+@plugin "daisyui" {
+  themes:
+    cupcake --default,
+    dracula --prefersdark;
+  root: '#app';
+  include: btn, card, modal, dropdown;
+  prefix: 'ui-';
+  logs: false;
+}
+```
+
+## 🎨 DaisyUI 主题使用
+
+1. DaisyUI 内置了 35 个预设主题，可以快速改变网站的整体外观。主题列表：
+
+   - 基础主题：`light`, `dark`
+   - 彩色主题：`cupcake`, `bumblebee`, `emerald`, `corporate`, `synthwave`, `retro`, `cyberpunk`
+   - 季节主题：`garden`, `forest`, `aqua`
+   - 特色主题：`lofi`, `pastel`, `fantasy`, `wireframe`, `black`, `luxury`, `dracula` 等
+
+2. 主题配置方式：
+
+   a. 使用默认主题（包含所有预设主题）：
+
+   ```css
+   @import 'tailwindcss';
+   @plugin "daisyui";
+   ```
+
+   b. 自定义主题配置：
+
+   ```css
+   @import 'tailwindcss';
+   @plugin "daisyui" {
+     themes:
+       theme1 [--flag],
+       theme2 [--flag],
+       ...;
+   }
+   ```
+
+3. 主题配置标志：
+   - `--default`: 设置为默认主题
+   - `--prefersdark`: 当系统处于暗色模式时自动应用
+4. 常见配置示例：
+
+   ```css
+   /* 亮色默认，暗色跟随系统 */
+   @plugin "daisyui" {
+     themes:
+       light --default,
+       dark --prefersdark;
+   }
+
+   /* 多主题配置 */
+   @plugin "daisyui" {
+     themes:
+       cupcake --default,
+       dracula --prefersdark,
+       corporate;
+   }
+
+   /* 单主题配置 */
+   @plugin "daisyui" {
+     themes: cyberpunk;
+   }
+   ```
+
+5. 主题切换方式：
+
+   - 自动切换：通过 `--prefersdark` 标志根据系统主题自动切换
+   - 手动切换：
+
+     ```js
+     // 切换到指定主题
+     document.documentElement.setAttribute('data-theme', 'themeName')
+
+     // 获取当前主题
+     const currentTheme = document.documentElement.getAttribute('data-theme')
+     ```
+
+## 🚀 最佳实践
+
+1. 使用 Tailwind CSS 工具类优先
+2. 需要自定义样式时，优先使用 Tailwind 的 `@apply` 指令
+3. 使用 DaisyUI 提供的预设组件类名，如 `btn`, `card` 等
+4. 组件样式尽量使用 Tailwind 和 DaisyUI 类名，避免编写自定义 CSS
+5. 配置建议：
+   - 开发环境保留 `logs: true` 以便调试
+   - 生产环境设置 `logs: false` 减少控制台输出
+   - 使用 `include` 只加载需要的组件以减小打包体积
+   - 如果项目有特定命名规范，使用 `prefix` 避免类名冲突

@@ -1,0 +1,70 @@
+---
+title: ESLint + Tailwind 组件样式规范检查建议
+description: 配合 Tailwind CSS 与 DaisyUI 的组件样式最佳实践，为组件文件提供 ESLint 风格校验与行为限制建议。
+globs: ["src/**/*.vue"]
+ruleType: Auto Attached
+---
+
+## ✅ 建议启用的 ESLint 规则
+
+以下配置可通过 `.eslintrc.js` 启用，配合 Prettier 与 Tailwind 使用：
+
+```js
+module.exports = {
+  rules: {
+    // 禁止在 style scoped 中使用非必要样式
+    'vue/no-unused-css-classes': 'warn',
+
+    // 禁止使用内联 style
+    'vue/no-inline-styles': 'warn',
+
+    // 限制深度嵌套
+    'vue/max-depth': ['warn', 3],
+
+    // 检查组件名是否正确（PascalCase）
+    'vue/component-name-in-template-casing': ['warn', 'PascalCase'],
+
+    // 防止未使用的组件注册
+    'vue/no-unused-components': 'warn'
+  }
+}
+```
+
+## 🧩 建议使用插件
+
+```bash
+pnpm add -D eslint-plugin-tailwindcss
+```
+
+并在 `.eslintrc.js` 中添加：
+
+```js
+plugins: ['tailwindcss'],
+extends: ['plugin:tailwindcss/recommended']
+```
+
+---
+
+## 🛠️ 代码风格建议
+
+- ❌ 避免使用 `<style scoped>`，使用类控制作用域。
+- ❌ 避免写标签选择器样式（如 `div {}`），应使用类名。
+- ✅ 所有 transition/hover 动效请使用 Tailwind 原子类。
+- ✅ 尽量保持组件样式结构由 class 驱动。
+
+---
+
+## 📝 Lint 报错时的处理建议
+
+- 若你被提示某个 class 未使用，可考虑从模板中移除或确认组件是否动态引用。
+- 使用 Prettier 配合 ESLint 自动修复格式问题。
+
+---
+
+## ✅ 效果预期
+
+- 自动提示非法 scoped 样式
+- 格式一致、结构清晰
+- 提交前通过 lint-staged 校验所有更改组件
+
+---

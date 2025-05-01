@@ -1,0 +1,29 @@
+{
+  "rules": {
+    "vue-component-naming": {
+      "description": "Vue 组件在模板中使用 kebab-case 命名规范",
+      "path": ".cursor/rules/vue-component-naming.md",
+      "glob": "**/*.vue"
+    },
+    "eslint-style-suggestions": {
+      "description": "配合 Tailwind CSS 与 DaisyUI 的组件样式最佳实践，为组件文件提供 ESLint 风格校验与行为限制建议",
+      "path": ".cursor/rules/eslint-style-suggestions.md",
+      "glob": "**/*.{vue,ts,js}"
+    },
+    "no-classname-concat": {
+      "description": "避免使用字符串拼接方式生成 Tailwind 或 DaisyUI 的类名，以确保构建产物中正确包含所需样式",
+      "path": ".cursor/rules/no-classname-concat.md",
+      "glob": "**/*.{vue,ts,js}"
+    },
+    "tailwindcss-best-practices": {
+      "description": "统一 Tailwind CSS 4.1 和 DaisyUI 5.0 在 Vue 3 + Vite 项目中的配置方式、样式组织、插件使用等最佳实践",
+      "path": ".cursor/rules/tailwindcss-best-practices.md",
+      "glob": "**/*.{vue,css}"
+    },
+    "vue-best-practices": {
+      "description": "统一 Vue 3 项目的目录结构、脚本风格、样式系统、性能优化、安全策略等最佳实践",
+      "path": ".cursor/rules/vue-best-practices.md",
+      "glob": "**/*.{vue,ts}"
+    }
+  }
+} 

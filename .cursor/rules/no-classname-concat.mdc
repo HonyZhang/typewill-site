@@ -1,0 +1,78 @@
+---
+title: 禁止拼接 Tailwind CSS / DaisyUI 类名
+description: 本规则警告你避免使用字符串拼接方式生成 Tailwind 或 DaisyUI 的类名，以确保构建产物中正确包含所需样式。
+globs: ["src/**/*.{vue,ts,tsx,js,jsx}"]
+ruleType: Auto Attached
+---
+
+## 🚫 问题说明
+
+Tailwind CSS 使用静态类名扫描器，只会编译模板中明确写出的类名。以下方式将导致类名**无法编译成最终样式**：
+
+```ts
+// 错误示例 ❌
+:class="'btn btn-' + variant"       // 无法识别 'btn-primary'
+:class="`btn btn-${variant}`"       // 同样无法识别
+```
+
+---
+
+## ✅ 推荐写法：使用条件判断或静态 class 字符串
+
+```ts
+// 推荐 ✅
+:class="[
+  'btn',
+  {
+    'btn-primary': variant === 'primary',
+    'btn-secondary': variant === 'secondary',
+    'btn-accent': variant === 'accent',
+    'btn-ghost': variant === 'ghost'
+  }
+]"
+```
+
+或在 `<script setup>` 中使用 `computed()`：
+
+```ts
+const classes = computed(() => [
+  'btn',
+  {
+    'btn-' + props.variant: false // ❌ 不推荐拼接！
+  }
+])
+```
+
+---
+
+## 🧠 背后原理
+
+- Tailwind 在构建时会“扫描”你的模板内容。
+- 拼接出的字符串是运行时才生成的，因此构建时无法检测。
+- DaisyUI 基于 Tailwind 插件生成样式，必须写出明确类名如 `btn-primary` 才能生效。
+
+---
+
+## 🧩 提示
+
+- 如果你**非拼不可**，可以通过 safelist 方式配置（不推荐）：
+
+```ts
+// tailwind.config.js
+safelist: ['btn-primary', 'btn-secondary', 'btn-accent']
+```
+
+但这种方式**违背原子化原则，增加维护成本**，仅用于特殊情况。
+
+---
+
+## ✅ 结论
+
+| 写法                     | 是否推荐 | 理由说明                    |
+|--------------------------|----------|-----------------------------|
+| `class="btn btn-primary"`| ✅        | 静态可识别、编译无误        |
+| `class="'btn-' + variant"` | ❌        | 无法静态分析，样式缺失      |
+| `:class="['btn', ...]`"   | ✅        | 推荐使用条件类名判断       |
+
+---
+
