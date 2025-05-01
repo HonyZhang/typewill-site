@@ -1,22 +1,39 @@
 <script setup lang="ts">
-import { useTheme } from '@/shared/composables/useTheme.ts'
+import { useTheme } from '@/shared/composables/useTheme'
+import { useI18n } from 'vue-i18n'
 
-const { currentTheme, toggleTheme } = useTheme()
+const { t } = useI18n()
+const { theme, isDark, setTheme } = useTheme()
+
+const themeOptions = [
+  { value: 'light', icon: 'sun', label: t('common.theme.light') },
+  { value: 'dark', icon: 'moon', label: t('common.theme.dark') },
+  { value: 'system', icon: 'computer', label: t('common.theme.system') }
+] as const
 </script>
 
 <template>
-  <button
-    class="btn btn-ghost btn-circle transition-transform hover:rotate-12"
-    :aria-label="currentTheme === 'dark' ? '切换到浅色主题' : '切换到深色主题'"
-    @click="toggleTheme"
-  >
-    <div
-      class="swap swap-rotate transition-transform duration-300"
-      :class="{ 'swap-active': currentTheme === 'dark' }"
+  <div class="dropdown dropdown-end">
+    <button
+      tabindex="0"
+      class="btn btn-ghost btn-circle"
+      :aria-label="t('common.theme.toggle')"
     >
+      <!-- 系统主题图标 -->
+      <svg
+        v-if="theme === 'system'"
+        class="w-5 h-5 fill-current"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M4 5a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm0 8a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm0 8a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2z"
+        />
+      </svg>
       <!-- 太阳图标 -->
       <svg
-        class="swap-on w-5 h-5 fill-current"
+        v-else-if="!isDark"
+        class="w-5 h-5 fill-current"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
       >
@@ -26,7 +43,8 @@ const { currentTheme, toggleTheme } = useTheme()
       </svg>
       <!-- 月亮图标 -->
       <svg
-        class="swap-off w-5 h-5 fill-current"
+        v-else
+        class="w-5 h-5 fill-current"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
       >
@@ -34,6 +52,28 @@ const { currentTheme, toggleTheme } = useTheme()
           d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"
         />
       </svg>
-    </div>
-  </button>
+    </button>
+    <ul
+      tabindex="0"
+      class="dropdown-content z-[1] menu p-2 shadow-lg bg-base-200 rounded-box w-52"
+    >
+      <li
+        v-for="option in themeOptions"
+        :key="option.value"
+      >
+        <button
+          class="flex items-center gap-2"
+          :class="{ active: theme === option.value }"
+          @click="setTheme(option.value)"
+        >
+          <span class="flex-1">{{ option.label }}</span>
+          <span
+            v-if="theme === option.value"
+            class="badge badge-sm"
+            >✓</span
+          >
+        </button>
+      </li>
+    </ul>
+  </div>
 </template>

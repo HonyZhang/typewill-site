@@ -7,6 +7,17 @@
     logs: false;
 }
 
+/* 主题切换过渡效果 */
+:root {
+    --theme-transition-duration: 300ms;
+}
+
+:root,
+[data-theme] {
+    transition: background-color var(--theme-transition-duration) ease,
+                color var(--theme-transition-duration) ease;
+}
+
 @keyframes fade-up {
   from {
     opacity: 0;

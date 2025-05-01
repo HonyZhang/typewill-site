@@ -10,7 +10,8 @@ export default {
     hero: {
       title: '每一次敲击，都是未来的刻印',
       subtitle: '每一行代码，铺展出智能秩序',
-      cta: '了解更多'
+      primaryCTA: '探索项目',
+      secondaryCTA: '加入我们'
     },
     projects: {
       title: '精选项目',
@@ -20,7 +21,10 @@ export default {
   common: {
     theme: {
       light: '浅色模式',
-      dark: '深色模式'
+      dark: '深色模式',
+      system: '跟随系统',
+      toggle: '切换主题',
+      current: '当前主题'
     },
     language: {
       zh: '中文',

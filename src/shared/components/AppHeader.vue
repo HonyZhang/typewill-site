@@ -3,7 +3,7 @@ import { computed, defineOptions } from 'vue'
 import { useRoute } from 'vue-router'
 import ThemeToggle from './ThemeToggle.vue'
 import LanguageToggle from './LanguageToggle.vue'
-import Logo from './Logo.vue'
+import Logo from './icons/Logo.vue'
 import { useI18n } from 'vue-i18n'
 import { useWindowScroll } from '@vueuse/core'
 
