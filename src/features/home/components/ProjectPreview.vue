@@ -1,33 +1,11 @@
-<script setup lang="ts">
-import { defineOptions } from 'vue'
-
-import ProjectCard from './ProjectCard.vue'
-import { useProjects } from '../composables/useProjects'
-
-defineOptions({
-  name: 'ProjectPreview'
-})
-
-const { projects } = useProjects()
-</script>
-
 <template>
-  <section 
-    class="w-full px-4 sm:px-6"
-    aria-labelledby="projects-heading"
-  >
-    <div class="max-w-6xl mx-auto">
-      <h2 
-        id="projects-heading" 
-        class="text-3xl font-bold mb-12 text-center text-base-content"
-      >
-        精选项目
+  <section id="projects" class="py-16">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12">
+        {{ t('home.projects.title') }}
       </h2>
-      <div 
-        class="grid gap-8 sm:gap-10 md:grid-cols-2 lg:grid-cols-3"
-        role="list"
-      >
-        <project-card
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <ProjectCard
           v-for="project in projects"
           :key="project.id"
           v-bind="project"
@@ -35,4 +13,18 @@ const { projects } = useProjects()
       </div>
     </div>
   </section>
-</template> 
+</template>
+
+<script setup lang="ts">
+import { defineOptions } from 'vue'
+import { useI18n } from 'vue-i18n'
+import ProjectCard from './ProjectCard.vue'
+import { useProjects } from '../composables/useProjects'
+
+defineOptions({
+  name: 'ProjectPreview'
+})
+
+const { t } = useI18n()
+const { projects } = useProjects()
+</script> 

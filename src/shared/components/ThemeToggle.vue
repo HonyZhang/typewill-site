@@ -11,7 +11,7 @@ const { currentTheme, toggleTheme } = useTheme()
     @click="toggleTheme"
   >
     <div
-      class="swap swap-rotate"
+      class="swap swap-rotate transition-transform duration-300"
       :class="{ 'swap-active': currentTheme === 'dark' }"
     >
       <!-- 太阳图标 -->
@@ -37,19 +37,3 @@ const { currentTheme, toggleTheme } = useTheme()
     </div>
   </button>
 </template>
-
-<style>
-:root {
-  --theme-transition-duration: 0.3s;
-}
-
-:root[data-theme] {
-  transition:
-    background-color var(--theme-transition-duration) ease-in-out,
-    color var(--theme-transition-duration) ease-in-out;
-}
-
-.swap {
-  transition: transform var(--theme-transition-duration) ease-in-out;
-}
-</style>
